@@ -1,0 +1,23 @@
+Kaynakça
+
+[1] 	TÜREB, «Türkiye Rüzgar Enerjisi Ýstatistik Raporu Ocak 2015,» Türkiye Rüzgar Enerjisi, 2015.
+[2] 	R. J. C. Peter J. Schubel, «Wind Turbine Blade Design,» Energies, pp. 3425-3449, 2012. 
+[3] 	A. B. Þ. B. Murat Gökçek, «Investigation of wind characteristics and wind energy potential in Kýrklareli, Tukey,» ScienceDirect Renewable Energy, pp. 1739-1752, 2007. 
+[4] 	J. M. A. R. J.F. Manwell, «1.1 Modern Wind Turbines,»  Wind Energy Explained Theory, Design and Application, West Sussex, Wiley, 2002, p. 2.
+[5] 	«Kaffee Mühle,» 28 12 2015. http://www.muehle-bremen.de/images/gallery/11.jpg. [Eriþildi: 28 Aralýk 2015].
+[6] 	J. M. A. R. J.F. Manwell, «1.2.2 Early wind generation of electricity,» Wind Energy Explained Theory, Design and Application, West Sussex, Wiley, 2002, p. 14.
+[7] 	«Euronews Haber,» Euronews, 25 Aralýk 2015. http://tr.euronews.com/2015/12/24/kirmizi-alarm-hava-kirliligi-dunya-geneline-yayildi/. [Eriþildi: 26 Aralýk 2015].
+[8] 	«Euronews Haber,» Euronews, 29 Aralýk 2015. http://tr.euronews.com/2015/12/29/milan-da-rekor-hava-kirliligine-radikal-cozum/. [Eriþildi: 29 Aralýk 2015].
+[9] 	IEA Wind, «2014 Annual Report,» International Energy Agency, 2015.
+[10] 	GWEC, «Global Wind Energy Council,» http://www.gwec.net/wp-content/uploads/2012/06/Annual-Installed-Capacity-by-Region-2006-2014.jpg. [Eriþildi: 29 Aralýk 2015].
+[11] 	H. A. Cumali Ýlkkýlý., «Wind power potential and usage in the coastal regions of Turkey,» Renewable and Sustainable Energy Reviews, pp. 78-86, 2015. 
+[12] 	Y.-L. T. Tsang-Jung Chang, «Evaluation of monthly capacity factor of WECS using chronological and probabilistic wind speed data: A case study of Taiwan,» ScienceDirect Renewable Energy, pp. 1999-2010, 2007. 
+[13] 	A. N. Çelik, «Energy output estimation for small-scale wind power generators using Weibull-representative wind data,» Journal of Wind Engineering and Industrial Aerodynamics, pp. 693-707, 2003. 
+[14] 	«3.2 One Dimensional Momentum Theory,» Wind Energy Explained Theory, Design and Application, West Sussex, Wiley, 2002, p. 84.
+[15] 	«3.3 Ideal Horizontal Axis Wind Turbine with Wake Rotation,» Wind Energy Explained Theory, Design and Application, West Sussex, Wiley, 2002, p. 89.
+[16] 	«3.5 Momentum Theory and Blade Element Theory,» Wind Energy Explained Theory Design and Applicaiton, West Sussex, Wiley, 2002, p. 105.
+[17] 	«3.6 Blade Shape for Ideal Rotor without Wake Rotation,» Wind Energy Explained Theory, Design and Application, West Sussex, Wiley, 2002, p. 110.
+[18] 	«3.8 Blade Shape for Optimum Rotor with Wake Rotation,» Wind Energy Explained Theory Design and Application, West Sussex, Wiley, 2002, p. 122.
+[19] 	T. H. Karl. J. Astrom, «3.2 The PID Controller,» Advanced PID Control, North Carolina, The Instrumentation, Systems and Automation Society, 2006, p. 64.
+
+
