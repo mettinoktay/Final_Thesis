@@ -1,22 +1,26 @@
 /*
- *   PIN MAP:
- *   Stepper Motor STEP -> D6
- *   Stepper Motor DIR  -> D7
- *   Stepper Motor ENB  -> D8
- *   Stepper Motor FLT  -> D4
- *   Stepper Motor M2   -> D9
- *   Stepper Motor M1   -> D10
- *   Stepper Motor M0   -> D11
+ *  On my tests, stepper motor could be pulsed once in every 0.6 milliseconds,
+ *  resulting 8.33 rev/sec. Calculation:
+ *    1000 ms/second / 0.6 ms/pulse / 200 pulse/revolution = 8.33 revolution / second
+ *
+ *  PIN MAP:
+ *    Stepper Motor STEP -> D6
+ *    Stepper Motor DIR  -> D7
+ *    Stepper Motor ENB  -> D8
+ *    Stepper Motor FLT  -> D4
+ *    Stepper Motor M2   -> D9
+ *    Stepper Motor M1   -> D10
+ *    Stepper Motor M0   -> D11
  *  
- *   Wind Vane A -> D3 
- *   Wind Vane B -> D12
- *   Generator A -> D2
- *   Generator B -> D13
+ *    Wind Vane A -> D3 
+ *    Wind Vane B -> D12
+ *    Generator A -> D2
+ *    Generator B -> D13
  *   
- *   Servo -> D5
- *   Pitot -> A0
+ *    Servo -> D5
+ *    Pitot -> A0
  *  
-*/
+ */
 
 #define CCW      0
 #define CW       1
@@ -34,20 +38,23 @@
 #define ONE8TH   12
 #define ONE16TH  2
 #define ONE32ND  14
-#define ENC_A    2
-#define GEN_A    3
+#define ENC_A    3
 #define ENC_B    12
+#define GEN_A    2
 #define GEN_B    13
 #define LED      13
+#define PITOT    0
 
 #include "Servo.h"
 
 Servo pitchServo;
+int DELAY = 10, time = 0;
 int encoderPulse = 0, windDirection = 0;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  Serial.flush();
   pinMode(M2, OUTPUT);
   pinMode(M1, OUTPUT);
   pinMode(M0, OUTPUT);
@@ -58,60 +65,27 @@ void setup() {
   pinMode(SERVO, OUTPUT);
   pinMode(GEN_B, INPUT);
   pinMode(ENC_B, INPUT);
-//attachInterrupt(digitalPinToInterrupt(GEN_A), wind, RISING);
+  attachInterrupt(digitalPinToInterrupt(ENC_A), wind, RISING);
 //attachInterrupt(digitalPinToInterrupt(GEN_A), ISR, RISING);
   pitchServo.attach(SERVO);  
-//disableStepper();
-  enableStepper();
+  disableStepper();
+//enableStepper();
   microStepping(FULL);
 }
 
 void loop() {
-    analogWrite(STEP, 5);
-    changeDirection(CCW);
-    Serial.println("CCW");
-    delay(5000);
-    changeDirection(CW);
-    Serial.println("CW");
-    delay(5000);
-}
-
-void disableStepper()
-{
-  digitalWrite(ENB, HIGH);
-}
-
-void enableStepper()
-{
-  digitalWrite(ENB, LOW);
-}
-
-void microStepping(int stepping)
-{
-  /*
-   Input must be one of these:
-     FULL     
-     HALF   
-     QUARTER
-     ONE8TH 
-     ONE16TH
-     ONE32ND
-   */
-   
-   PORTB = stepping;
-}
-
-void changeDirection(int DIRECTION)
-{
-  /*
-   Input must be one of these:
-     CCW
-     CW
-   */
-  digitalWrite(DIR, DIRECTION);
+  if(thereIsAFaultinDRV8825()){
+    disableStepper();
+  }
+  
 }
 
 void wind()
 {
-  encoderPulse += digitalRead(GEN_B);
+   if(digitalRead(ENC_B)){
+     encoderPulse++;
+   }
+   else{
+     encoderPulse--;
+   }
 }
