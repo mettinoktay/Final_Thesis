@@ -22,6 +22,7 @@
  *  
  */
 
+/*  DEFINITIONS  */
 #define CCW      0
 #define CW       1
 #define ENB      8
@@ -52,40 +53,11 @@ int DELAY = 10, time = 0;
 int encoderPulse = 0, windDirection = 0;
 
 void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  Serial.flush();
-  pinMode(M2, OUTPUT);
-  pinMode(M1, OUTPUT);
-  pinMode(M0, OUTPUT);
-  pinMode(FLT, INPUT);
-  pinMode(ENB, OUTPUT);
-  pinMode(STEP, OUTPUT);
-  pinMode(DIR, OUTPUT);
-  pinMode(SERVO, OUTPUT);
-  pinMode(GEN_B, INPUT);
-  pinMode(ENC_B, INPUT);
-  attachInterrupt(digitalPinToInterrupt(ENC_A), wind, RISING);
-//attachInterrupt(digitalPinToInterrupt(GEN_A), ISR, RISING);
-  pitchServo.attach(SERVO);  
-  disableStepper();
-//enableStepper();
-  microStepping(FULL);
+  setupSystem();
 }
 
 void loop() {
   if(thereIsAFaultinDRV8825()){
     disableStepper();
   }
-  
-}
-
-void wind()
-{
-   if(digitalRead(ENC_B)){
-     encoderPulse++;
-   }
-   else{
-     encoderPulse--;
-   }
 }
