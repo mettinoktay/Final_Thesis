@@ -1,9 +1,5 @@
 # Final_Thesis
-Bachelor Thesis of mine at Yıldız Technical University in İstanbul.
 
-Matlab file containing blade design calculations using formulas of the book Wind Energy Explained (ISBN: 978-0-470-01500-1)
-can be found under Tasarım/Türbin Tasarımı directory.
+Is anyone reading this? Okay.
 
-EAGLE files of the PCB design can be found under Tasarım/PCB Tasarımı directory.
-
-Rapor directory contains final report of design.
+Here is the bachelor thesis work of mine at Yıldız Technical University in İstanbul. I'm building a small scale wind turbine. And I'm gonna produce a darn good turbine.
