@@ -1,5 +1,6 @@
-void driveStepper(int pulse, int rps)
+void driveStepper(int pulse, int dir ,int rps)
 {
+  changeDirection(dir);
   for(int i = 0; i <= pulse; i++){
     digitalWrite(STEP, HIGH);
     digitalWrite(STEP, LOW);

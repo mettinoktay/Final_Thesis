@@ -16,6 +16,6 @@ void setupSystem(){
 //attachInterrupt(digitalPinToInterrupt(GEN_A), ISR, RISING);
   pitchServo.attach(SERVO);  
   disableStepper();
-//enableStepper();
+  //enableStepper();
   microStepping(FULL);
 }

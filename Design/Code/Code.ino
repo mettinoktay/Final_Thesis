@@ -45,12 +45,15 @@
 #define GEN_B    13
 #define LED      13
 #define PITOT    0
+#define ANLCONV  0.00488758553
+#define AIRDENS  1.225
 
 #include "Servo.h"
 
 Servo pitchServo;
 int DELAY = 10, time = 0;
 int encoderPulse = 0, windDirection = 0;
+double outputVoltage = 0, diff_pressure = 0;
 
 void setup() {
   setupSystem();
@@ -60,4 +63,6 @@ void loop() {
   if(thereIsAFaultinDRV8825()){
     disableStepper();
   }
+  Serial.println(readWindSpeed());
+  delay(500);
 }
