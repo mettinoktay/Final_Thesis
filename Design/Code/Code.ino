@@ -1,33 +1,52 @@
-/*
- *  On my tests, stepper motor could be pulsed once in every 0.6 milliseconds,
- *  resulting 8.33 rev/sec. Calculation:
- *    1000 ms/second / 0.6 ms/pulse / 200 pulse/revolution = 8.33 revolution / second
- *
+/*  YILDIZ TEKNİK ÜNİVERSİTESİ
+ *  MEKATRONİK MÜHENDİSLİĞİ BÖLÜMÜ
+ *  
+ *  LİSANS BİTİRME TEZİ
+ *  
+ *  KÜÇÜK ÇAPLI RÜZGAR TÜRBİNİ YAW VE PITCH KONTROLÜ
+ *  
+ *  METİN OKTAY YILMAZ
+ *  11067027
+ *  
+ *  DANIŞMAN: YRD. DOÇ. DR. HATİCE MERCAN
+ *  
+ *  Yazar: Metin Oktay Yılmaz
+ *  Tarih: 08.06.2016
  */
 
-#include "pins.h"
-#include "configuration.h"
+/* Bu kısımda, kullanılacak kütüphaneler ekleniyor. */
 #include "Servo.h"
+#include "WindTurbine.h"
+#include "DRV8825.h"
 #include "PID_v1.h"
 
-Servo pitchServo;
-double windDirectionError = 0.0,
-       windSpeed = 0.0;
-double yawSetPoint = 0.0, yawInput, yawOutput,
-       yawKp = 2.0,
-       yawKi = 0.0,
-       yawKd = 1.0;
+/* Debug ederken kullanılacak komutların aktif edilmesi için
+ * aşağıdaki satırdaki yorumu kaldırın.
+ */
+//#define   DEBUG
 
-PID PID_yawAxis(&yawInput, &yawOutput, &yawSetPoint,
-                 yawKp,     yawKi,      yawKd,
-                 AUTOMATIC);
+double windSpeed = 0.0,           // Rüzgar hızının saklanacağı değişken
+       AoA = 0.0,                 // Hücum açısının      "         "
+       yawSetPoint = 0,           // Yaw ekseni referans noktası
+       windDirectionError = 0.0,  // Rüzgar yönü hatasının saklanacağı değişken
+       yawOutput,                 // Yaw ekseni motoruna gönderilecek çıkış değeri
+       yawKp = 2.0,               // PID - P katsayısı
+       yawKi = 0.0,               // PID - I katsayısı
+       yawKd = 1.0;               // PID - D katsayısı
+
+/* Servo, DRV8825, WindTurbine ve PID instance'ları */
+Servo pitchServo;
+DRV8825 stepper;
+WindTurbine myTurbine;
+PID PID_yawAxis(&windDirectionError, &yawOutput, &yawSetPoint, yawKp, yawKi, yawKd, DIRECT);
 
 void setup() {
-  #ifdef BAUD
-    Serial.begin(BAUD);
-    Serial.flush();
-  #endif
+  /* Serial kütüphanesi, Arduino'nun bilgisayar ile iletişim kurmasına olanak sağlar. */
+  Serial.begin(57600);
+  Serial.flush();
   
+  /* pinMode fonksiyonu Atmega pinlerini giriş veya çıkış olarak ayarlar. */
+  /* Kullanılan parametrelerin ne işe yaradıklarını anlamak için pins.h dosyasına bakınız. */
   pinMode (M2,    OUTPUT);
   pinMode (M1,    OUTPUT);
   pinMode (M0,    OUTPUT);
@@ -35,79 +54,46 @@ void setup() {
   pinMode (STEP,  OUTPUT);
   pinMode (DIR,   OUTPUT);
   pinMode (SERVO, OUTPUT);
-  pinMode (GEN_B, INPUT);
+  
+  /* Servo, DRV8825 ve PID instance'ları başlatılıyor. */
   pitchServo.attach(SERVO);
-  enableStepper();
-  microStepping(FULL);
+  stepper.Enable();
+  stepper.microStepping(FULL);
+  PID_yawAxis.SetOutputLimits(-1000,1000);
 }
 
 void loop() {
-  while(thereIsAFaultinDRV8825()){
-    disableStepper();
+  /* Eğer DRV8825'te donanımsal bir hata varsa türbin kontrolü durdurulur. */
+  while(stepper.isFaulty()){
+    stepper.Disable();
+    Serial.println("TURBINE HALTED DUE TO DRV8825 MALFUNCTION");    
   }
-  readWindSpeed(windSpeed);
-  computeAoA(windSpeed);
-  computeDiretionError(windDirectionError);
-  PID_yawAxis.Compute();
-  Serial.println(yawOutput);
-}
-
-void driveStepper(int pulse, int dir ,int rps) {
-  changeDirection(dir);
-  for(int i = 0; i <= pulse; i++){
-    digitalWrite(STEP, HIGH);
-    digitalWrite(STEP, LOW);
-    delay(rps);
+  
+  myTurbine.readWindSpeed(&windSpeed);
+  
+  /* Rüzgar hızı cut-off hızını aştığında rotor durdurulur. */
+  if (windSpeed > 10) {
+    pitchServo.write(NO_LIFT);
+    Serial.println("TURBINE HALTED DUE TO WIND SPEED");
+    myTurbine.computeDirectionError(&windDirectionError);
+    PID_yawAxis.Compute();
   }
+  /* Rüzgar hızı operasyon sınırları içindeyse kontrol kısmına geçilir. */
+  else {
+    pitchServo.write(MAX_LIFT);
+    Serial.println("TURBINE IS NORMALLY OPERATING");
+    myTurbine.computeDirectionError(&windDirectionError);
+    PID_yawAxis.Compute();
+  }
+
+  stepper.Drive(yawOutput);
+  
+  #ifdef DEBUG
+    Serial.print("Wind Speed: ");
+    Serial.println(windSpeed);
+    Serial.print("Wind Direction Error: ");
+    Serial.println(windDirectionError);
+    Serial.print("Yaw Output: ");
+    Serial.println(yawOutput);
+  #endif
 }
-
-void disableStepper() {
-  digitalWrite(ENB, HIGH);
-}
-
-void enableStepper() {
-  digitalWrite(ENB, LOW);
-}
-
-void microStepping(int stepping) {
-  /*
-   Input must be one of these:
-     FULL, HALF, QUARTER, ONE8TH, ONE16TH or ONE32ND
-   */
-   PORTB = stepping;
-}
-
-void changeDirection(int DIRECTION) {
-  /*
-   Input must be one of these:
-     CCW, CW
-   */
-  digitalWrite(DIR, DIRECTION);
-}
-
-bool thereIsAFaultinDRV8825() {
-  return !digitalRead(FLT);
-}
-
-void readWindSpeed(double &windSpeed) {
-  double outputVoltage = 0.0, diff_pressure = 0.0;
-  outputVoltage = (analogRead(PITOT)-528)*PITCONV;
-
-  diff_pressure = outputVoltage*1000;
-
-  windSpeed = sqrt(2*((diff_pressure)/AIRDENS));
-}
-
-double computeAoA(double &windSpeed) {
-  // int AoA;
-  // do some math here using ws to calculate AoA
-  // pitchServo.write(AoA);
-  // return AoA;
-}
-
-
-void computeDiretionError(double &error) {
-  error = (analogRead(VANE) - 511.5)*VANCONV;
-}
-
-

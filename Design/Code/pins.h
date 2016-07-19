@@ -1,6 +1,8 @@
 #ifndef PINS_H
 #define PINS_H
 
+#pragma once
+
 /*  PIN MAP:
  *    Stepper Motor STEP -> D6
  *    Stepper Motor DIR  -> D7
