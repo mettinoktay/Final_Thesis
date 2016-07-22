@@ -10,7 +10,7 @@ void DRV8825::Drive(int pulse) {
 	}
 	else {
 		DRV8825::changeDirection(CCW);
-		pulse = -1.0*pulse;
+		pulse = -1*pulse;
 	}
 
 	for(int step = 0; step <= pulse; step++){
